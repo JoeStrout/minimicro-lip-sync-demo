@@ -7,13 +7,13 @@ jawSprite.image = file.loadImage("mcp-jaw.png")
 jawSprite.x = 541; jawSprite.y = 151
 jawSprite2 = new Sprite
 jawSprite2.image = jawSprite.image
-jawSprite2.x = 411; jawSprite.y = 151
+jawSprite2.x = 411; jawSprite2.y = 151
 display(4).sprites = [jawSprite, jawSprite2]
 
 list.swap = function(i,j)
-	temp=self[i]
-	self[i]=self[j]
-	self[j]=tem
+	temp = self[i]
+	self[i] = self[j]
+	self[j] = temp
 end function
 c = jawSprite2.corners
 c.swap(0,1); c.swap(2,3)  // (flips the image horizontally)
@@ -22,13 +22,24 @@ jawSprite2.setCorners c
 openMouth = function(amount)
 	c = jawSprite.corners
 	dy = 32 * amount
-	c[0][1] = c[1][1] - dy
-	c[3][1] = c[2][1] - dy
+	c[0][1] = c[1][1] - dy  // bottom inner corner
+	c[3][1] = c[2][1] - dy  // top inner corner
 	jawSprite.setCorners c
 	c = jawSprite2.corners
-	c[1][1] = c[0][1] - dy
-	c[2][1] = c[3][1] - dy
+	c[0][1] = c[1][1] - dy  // bottom inner corner
+	c[3][1] = c[2][1] - dy  // top inner corner
 	jawSprite2.setCorners c
 end function
 
-openMouth 1
+speech = file.loadSound("happyNewYear.ogg")
+
+speech.play
+amount = 0
+while speech.isPlaying
+	a = speech.amp
+	target = a * 5  // (found experimentally)
+	amount = (amount + target*4) / 5
+	openMouth amount
+	yield
+end while
+openMouth 0
